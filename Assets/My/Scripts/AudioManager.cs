@@ -32,16 +32,16 @@ public class AudioManager : MonoBehaviour
     }
 
     /// <summary>
-    /// JSON(Settings.sounds) ±âÁØÀ¸·Î StreamingAssets/Audio¿¡¼­ »ç¿îµå »çÀü ·Îµù.
-    /// WAV/OGG/MP3 È®ÀåÀÚ ÀÚµ¿ ÆÇº°.
+    /// JSON(Settings.sounds) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ StreamingAssets/Audioï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½.
+    /// WAV/OGG/MP3 È®ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ ï¿½Çºï¿½.
     /// </summary>
     private IEnumerator LoadSoundsFromSettings()
     {
         soundMap.Clear();
         soundVolumeMap.Clear();
 
-        var settings = JsonLoader.Instance.Settings;
-        if (settings == null || settings.sounds == null) yield break;
+        Settings settings = JsonLoader.Instance.settings;
+        if (settings?.sounds == null) yield break;
 
         foreach (var entry in settings.sounds)
         {
@@ -72,7 +72,7 @@ public class AudioManager : MonoBehaviour
     }
 
     /// <summary>
-    /// °£´Ü Àç»ý API: Å°·Î µî·ÏµÈ Å¬¸³À» PlayOneShot.
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ API: Å°ï¿½ï¿½ ï¿½ï¿½Ïµï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ PlayOneShot.
     /// </summary>
     public bool Play(string key, float? volumeOverride = null)
     {

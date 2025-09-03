@@ -12,25 +12,41 @@ public class FadeManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null) { Instance = this; }
-        else if (Instance != this) { Destroy(gameObject); return; }
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
 
         if (!fadeImage)
         {
             Debug.LogError("[FadeManager] Fade Image is not assigned.");
             return;
         }
-        SetAlpha(0f);
+
+        SetAlpha(1f);
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
     }
 
     public void FadeIn(float duration, Action onComplete = null)
     {
-        fadeImage.raycastTarget = true;
-        fadeImage.transform.SetAsLastSibling();
+        fadeImage.raycastTarget = true; // 사용자의 버튼 클릭 등을 막음
+        fadeImage.transform.SetAsLastSibling(); // 맨 앞에 위치시킴
         StartCoroutine(Fade(1f, 0f, duration, false, () =>
         {
             fadeImage.raycastTarget = false;
-            fadeImage.transform.SetAsFirstSibling();
+            fadeImage.transform.SetAsFirstSibling(); // 맨 뒤로 이동
             onComplete?.Invoke();
         }));
     }
@@ -54,8 +70,8 @@ public class FadeManager : MonoBehaviour
         var tcs = new TaskCompletionSource<bool>();
         fadeImage.raycastTarget = true;
         fadeImage.transform.SetAsLastSibling();
-        StartCoroutine(Fade(from, to, duration, unscaled, () => tcs.TrySetResult(true)));
-        await tcs.Task;
+        StartCoroutine(Fade(from, to, duration, unscaled, () => tcs.TrySetResult(true))); // Fade 완료 후 tcs에 True 설정
+        await tcs.Task; // True를 호출 받기 전까지 대기
         if (to <= 0.001f)
         {
             fadeImage.raycastTarget = false;
@@ -73,6 +89,7 @@ public class FadeManager : MonoBehaviour
             elapsed += unscaled ? Time.unscaledDeltaTime : Time.deltaTime;
             yield return null;
         }
+
         SetAlpha(to);
         onComplete?.Invoke();
     }

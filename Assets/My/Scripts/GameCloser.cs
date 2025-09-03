@@ -13,7 +13,7 @@ public class GameCloser : MonoBehaviour
 
     private void Start()
     {
-        closeSetting = JsonLoader.Instance.Settings.closeSetting;
+        closeSetting = JsonLoader.Instance.settings.closeSetting;
 
         if (rectTransform != null)
         {

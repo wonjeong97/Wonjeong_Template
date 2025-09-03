@@ -21,7 +21,7 @@ public class ReporterMessageReceiver : MonoBehaviour
 		else
 			reporter.size = new Vector2(48, 48);
 
-		reporter.UserData = "Put user date here like his account to know which user is playing on this device";
+		//reporter.userData = "Put user date here like his account to know which user is playing on this device";
 	}
 
 	void OnHideReporter()

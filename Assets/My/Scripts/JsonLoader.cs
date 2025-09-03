@@ -5,16 +5,17 @@ using UnityEngine;
 
 public class JsonLoader : MonoBehaviour
 {
-    [NonSerialized] public Settings Settings;
+    [NonSerialized] public Settings settings;
 
     private static JsonLoader _instance;
     public static JsonLoader Instance
     {
         get
         {
-            if (_instance == null)
+            if (ReferenceEquals(_instance, null))
             {
-                _instance = FindObjectOfType<JsonLoader>() ?? new GameObject("JsonLoader").AddComponent<JsonLoader>();
+                _instance = FindFirstObjectByType<JsonLoader>() 
+                            ?? new GameObject("JsonLoader").AddComponent<JsonLoader>();
             }
             return _instance;
         }
@@ -33,15 +34,18 @@ public class JsonLoader : MonoBehaviour
             return;
         }
 
-        Settings = LoadJsonData<Settings>("Settings.json");
+        settings = LoadJsonData<Settings>("Settings.json");
     }
 
     private void Start()
     {
-        if (Settings == null) return;
+        if (settings == null)
+        {
+            Debug.LogError($"[JsonLoader] Settings is null.]");
+        }
     }
 
-    private T LoadJsonData<T>(string fileName)
+    public T LoadJsonData<T>(string fileName)
     {
         string filePath = Path.Combine(Application.streamingAssetsPath, fileName).Replace("\\", "/");
 
@@ -52,7 +56,7 @@ public class JsonLoader : MonoBehaviour
         }
 
         string json = File.ReadAllText(filePath);
-        Debug.Log("[JsonLoader] JSON load complete: " + json);
+        //Debug.Log($"[JsonLoader] {fileName} load complete: \n" + json);
 
         return JsonUtility.FromJson<T>(json);
     }
@@ -78,8 +82,8 @@ public class ImageSetting
     public Vector2 size;
     public Vector3 rotation;
     public string sourceImage;         
-    public Color color;
-    public UIImageType type;
+    public Color color = Color.white;
+    public UIImageType type = UIImageType.Simple;
 }
 [Serializable]
 public class TextSetting
@@ -134,8 +138,12 @@ public class KeyboardSetting
 public class PageSetting
 {
     public string name;
+    public ImageSetting pageBackground;
+    public Vector2 position;
+    public Vector2 size = new Vector2(1920, 1080);
     public TextSetting[] texts;
     public ImageSetting[] images;
+    public ButtonSetting[] buttons;
     public VideoSetting[] videos;
     public KeyboardSetting[] keyboards;
 }
@@ -157,9 +165,12 @@ public class ButtonSetting
     public Vector2 size;
     public Vector3 rotation;
     public ImageSetting buttonBackgroundImage;
+    public VideoSetting buttonBackgroundVideo;
     public ImageSetting buttonAdditionalImage;
     public TextSetting buttonText;
     public string buttonSound;
+    
+    public string targetPopupName; // 클릭 시 열릴 팝업 이름
 }
 
 [Serializable]
@@ -169,23 +180,18 @@ public class PopupSetting
     public ImageSetting popupBackgroundImage;
     public TextSetting[] popupTexts;
     public ImageSetting[] popupImages;
-    public ButtonSetting popupButton;
-}
-
-[Serializable]
-public class TitleSetting
-{
-    public ImageSetting titleBackground;
-    public ButtonSetting startButton;
+    public ButtonSetting popupCloseButton;
 }
 
 [Serializable]
 public class Settings
 {
     public float inactivityTime; // 입력이 없을 시 타이틀로 되돌아가는 시간
+    public float fadeTime;
     public CloseSetting closeSetting;
     public FontMaps fontMap;
     public SoundSetting[] sounds;
-    public TitleSetting testTitle;
+    public ImageSetting mainBackground;
+    public PageSetting idlePage;
 }
 #endregion
